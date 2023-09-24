@@ -1,2 +1,2 @@
 # FHV_ProgressiveWebapps
-Exercise to create a progressive webapp
+Create a progressive webapp using plain javascript
