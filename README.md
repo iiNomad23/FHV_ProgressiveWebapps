@@ -1,2 +1,2 @@
-# FHV_Progressive_Webapps
+# FHV_ProgressiveWebapps
 Exercise to create a progressive webapp
