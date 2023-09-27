@@ -1,9 +1,10 @@
 
-#chatContainer {
+.chatContainer {
     display: flex;
     height: 100vh;
 }
-#conversationOverviewContainer {
+
+.conversationOverviewContainer {
     width: 20vw;
     max-width: 300px;
     background: #ebebeb;
@@ -12,8 +13,56 @@
     border-right-color: #b9b9b9;
     padding: 10px;
 }
-#conversationContainer {
+
+.conversationContainer {
     flex: 1;
-    background: #ebebeb;
+    background: rgba(235, 235, 235, 0.22);
     padding: 10px;
+}
+
+.userSelectionContainer {
+    z-index: 1;
+    position: absolute;
+    background: #cdcdcdc7;
+    width: 100%;
+    height: calc(100vh - 58px);
+}
+
+.userSelectionContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.userSelectionContainer > .imageContainer {
+    width: 200px;
+    height: 200px;
+    margin: 1%;
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari */
+    user-select: none; /* Standard syntax */
+}
+
+.selectedUser {
+    height: 38px;
+}
+
+.selectedUser > span {
+    line-height: 32px;
+}
+
+.selectedUser > .imageContainer {
+    width: 40px;
+    position: absolute;
+    right: 10px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.userSelectionContainer > .imageContainer > img, .selectedUser > .imageContainer > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+    pointer-events: none;
 }

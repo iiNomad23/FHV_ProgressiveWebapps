@@ -7,22 +7,25 @@
     <link rel="stylesheet" href="css/layout.css"/>
     <link rel="stylesheet" href="css/chat.css"/>
 
-    <script src="src/main.js"></script>
-    <script src="src/api.js"></script>
+    <script src="src/ChatApp.js"></script>
+    <script src="src/Api.js"></script>
+    <script src="src/Root.js"></script>
 </head>
 <body>
 <header>
-    <span>Username or Avatar</span>
+    <div class="selectedUser">
+        <span>SignIn</span>
+    </div>
 </header>
-<main>
-<div id="chatContainer">
-    <div id="conversationOverviewContainer">
-        conversation overview
+<main class="mainContainer">
+    <div class="chatContainer">
+        <div class="conversationOverviewContainer">
+            conversation overview
+        </div>
+        <div class="conversationContainer">
+            conversation
+        </div>
     </div>
-    <div id="conversationContainer">
-        conversation
-    </div>
-</div>
 </main>
 <!--
 <footer>
