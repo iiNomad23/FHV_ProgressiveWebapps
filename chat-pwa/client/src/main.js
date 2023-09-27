@@ -3,5 +3,16 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    alert("Oi!");
+
+    DefaultAPI
+        .getUsers()
+        .then(
+            (result) => {
+                alert(result);
+            },
+            (error) => {
+                console.error("fetch getUsers failed");
+            }
+        );
+
 }, false);
