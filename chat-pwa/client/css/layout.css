@@ -16,7 +16,6 @@ header {
 }
 
 .mainContainer {
-    /*height: calc(100vh - 58px - 38px);*/
     height: calc(100vh - 58px);
     margin-top: 58px;
     overflow: hidden;

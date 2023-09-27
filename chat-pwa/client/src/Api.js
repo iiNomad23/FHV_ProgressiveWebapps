@@ -46,7 +46,7 @@ class DefaultAPI {
         });
     }
 
-    static getMessageById(id) {
+    static getMessagesByConversationId(id) {
         return new Promise((resolve, reject) => {
             try {
                 fetch(this.serverUrl + "/conversations/" + id + "/messages", {

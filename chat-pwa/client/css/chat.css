@@ -4,14 +4,12 @@
     height: 100vh;
 }
 
-.conversationOverviewContainer {
-    width: 20vw;
-    max-width: 300px;
+.conversationCardContainer {
+    width: 300px;
     background: #ebebeb;
     border-right: solid;
     border-right-width: 1px;
     border-right-color: #b9b9b9;
-    padding: 10px;
 }
 
 .conversationContainer {
@@ -26,9 +24,6 @@
     background: #cdcdcdc7;
     width: 100%;
     height: calc(100vh - 58px);
-}
-
-.userSelectionContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,12 +38,19 @@
     user-select: none; /* Standard syntax */
 }
 
-.selectedUser {
-    height: 38px;
+.userSelectionContainer > .imageContainer > img, .selectedUser > .imageContainer > img, .cardAvatar > .imageContainer > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+    pointer-events: none;
 }
 
-.selectedUser > span {
-    line-height: 32px;
+.selectedUser {
+    height: 38px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .selectedUser > .imageContainer {
@@ -59,10 +61,36 @@
     cursor: pointer;
 }
 
-.userSelectionContainer > .imageContainer > img, .selectedUser > .imageContainer > img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    border-radius: 50%;
-    pointer-events: none;
+.card {
+    display: flex;
+    cursor: pointer;
+}
+
+.cardAvatar {
+    height: 50px;
+    width: 50px;
+    margin: 10px;
+}
+
+.cardAvatar > .imageContainer {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    cursor: pointer;
+}
+
+.cardInformation {
+    flex: 1;
+    align-self: center;
+    font-family: sans-serif;
+    margin: 10px;
+}
+
+.cardSubInformation {
+    color: #979797;
+    font-size: 13px;
+}
+
+.cardContainer > .active {
+    background: #f9f9f9;
 }

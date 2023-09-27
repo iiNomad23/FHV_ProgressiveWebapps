@@ -8,7 +8,14 @@ class ChatApp {
     static currentUser = null;
 
     static async init() {
-        await this.displayUserSelection();
+        if (this.users == null || this.currentUser == null) {
+            await this.displayUserSelection();
+        } else {
+            let selectedUserEl = document.getElementsByClassName("selectedUser")[0];
+            selectedUserEl.innerHTML = this.createNavBarUserAvatarHTML(this.currentUser.username);
+
+            await this.displayConversations();
+        }
     }
 
     static async displayUserSelection() {
@@ -16,23 +23,20 @@ class ChatApp {
             this.users = await DefaultAPI.getUsers();
 
             let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
-            mainContainerEl.innerHTML = mainContainerEl.innerHTML + this.createUserSelectionHTML(this.users);
+            mainContainerEl.innerHTML = this.createUserSelectionHTML();
 
             let imageContainerEls = document.getElementsByClassName('imageContainer');
             for (let i = 0; i < imageContainerEls.length; i++) {
                 imageContainerEls[i].addEventListener('click', () => {
                     this.currentUser = this.users[i];
 
-                    let userSelectionContainerEl = document.getElementsByClassName("userSelectionContainer")[0];
-                    userSelectionContainerEl.parentElement.removeChild(userSelectionContainerEl);
+                    let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
+                    mainContainerEl.innerHTML = this.createChatViewHTML();
 
                     let selectedUserEl = document.getElementsByClassName("selectedUser")[0];
+                    selectedUserEl.innerHTML = this.createNavBarUserAvatarHTML(this.currentUser.username);
 
-                    let html = "<div class='imageContainer'>";
-                    html += "<img src='" + DefaultAPI.serverUrl + "/images/" + this.currentUser.username + ".jpg' alt='avatar'>";
-                    html += "</div>";
-
-                    selectedUserEl.innerHTML = html;
+                    this.displayConversations();
                 });
             }
         } catch (e) {
@@ -40,16 +44,28 @@ class ChatApp {
         }
     }
 
-    static createUserSelectionHTML(users) {
-        if (users == null || !Array.isArray(users)) {
+    static async displayConversations() {
+        let conversations = await DefaultAPI.getConversations();
+        if (conversations == null) {
+            return; // TODO: add html that no conversation exist
+        }
+
+        conversations = conversations
+            .filter(item => item.participants.includes(this.currentUser.username));
+
+        ConversationManager.createConversationCards(conversations, this.users, this.currentUser);
+    }
+
+    static createUserSelectionHTML() {
+        if (this.users == null || !Array.isArray(this.users)) {
             console.error("user object invalid\nuser object must be of type array");
             return "No users";
         }
 
         let html = "<div class='userSelectionContainer flexContainer'>";
 
-        for (let i = 0; i < users.length; i++) {
-            let user = users[i];
+        for (let i = 0; i < this.users.length; i++) {
+            let user = this.users[i];
             if (user == null) {
                 continue;
             }
@@ -61,6 +77,19 @@ class ChatApp {
 
         html += "</div>";
 
+        return html;
+    }
+
+    static createChatViewHTML() {
+        let html = "<div class='conversationCardContainer'></div>";
+        html += "<div class='conversationContainer'></div>";
+        return html;
+    }
+
+    static createNavBarUserAvatarHTML(username) {
+        let html = "<div class='imageContainer'>";
+        html += "<img src='" + DefaultAPI.serverUrl + "/images/" + username + ".jpg' alt='avatar'>";
+        html += "</div>";
         return html;
     }
 }
