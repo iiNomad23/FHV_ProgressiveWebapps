@@ -17,7 +17,6 @@
 
 class DefaultAPI {
     static serverUrl = "http://localhost:5000";
-    Websocket = new WebSocket()
 
     static getUsers() {
         return new Promise((resolve, reject) => {
@@ -28,12 +27,36 @@ class DefaultAPI {
                     resolve(response.json());
                 });
             } catch (e) {
-                reject();
+                reject(e);
             }
         });
     }
-}
 
-function getUsers() {
+    static getConversations() {
+        return new Promise((resolve, reject) => {
+            try {
+                fetch(this.serverUrl + "/conversations", {
+                    method: "GET",
+                }).then((response) => {
+                    resolve(response.json());
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
 
+    static getMessageById(id) {
+        return new Promise((resolve, reject) => {
+            try {
+                fetch(this.serverUrl + "/conversations/" + id + "/messages", {
+                    method: "GET",
+                }).then((response) => {
+                    resolve(response.json());
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
 }
