@@ -15,8 +15,8 @@ header {
 }
 
 main {
-    height: calc(100vh - 40px - 38px);
-    margin-top: 40px;
+    height: calc(100vh - 58px - 38px);
+    margin-top: 58px;
     overflow: hidden;
 }
 
