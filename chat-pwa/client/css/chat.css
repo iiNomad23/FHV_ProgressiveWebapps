@@ -1,0 +1,19 @@
+
+#chatContainer {
+    display: flex;
+    height: 100vh;
+}
+#conversationOverviewContainer {
+    width: 20vw;
+    max-width: 300px;
+    background: #ebebeb;
+    border-right: solid;
+    border-right-width: 1px;
+    border-right-color: #b9b9b9;
+    padding: 10px;
+}
+#conversationContainer {
+    flex: 1;
+    background: #ebebeb;
+    padding: 10px;
+}
