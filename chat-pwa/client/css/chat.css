@@ -15,7 +15,6 @@
 .conversationContainer {
     flex: 1;
     background: rgba(235, 235, 235, 0.22);
-    padding: 10px;
 }
 
 .userSelectionContainer {
@@ -29,13 +28,16 @@
     align-items: center;
 }
 
+.imageContainer {
+    -webkit-user-select: none; /* Safari */
+    user-select: none; /* Standard syntax */
+}
+
 .userSelectionContainer > .imageContainer {
     width: 200px;
     height: 200px;
     margin: 1%;
     cursor: pointer;
-    -webkit-user-select: none; /* Safari */
-    user-select: none; /* Standard syntax */
 }
 
 .userSelectionContainer > .imageContainer > img, .selectedUser > .imageContainer > img, .cardAvatar > .imageContainer > img {
@@ -93,4 +95,21 @@
 
 .cardContainer > .active {
     background: #f9f9f9;
+}
+
+.conversation {
+    margin: 10px;
+}
+
+.message {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.myMessage {
+    background: #b5f9b5;
+}
+
+.friendMessage {
+    background: #e1dede;
 }

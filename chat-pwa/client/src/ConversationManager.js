@@ -11,9 +11,9 @@ class ConversationManager {
     static createConversationCards(conversations, users, currentUser) {
         let html = "<div class='cardContainer'>";
 
-        let currentConversationUser = null;
+        let currentFriendUser = null;
         let currentConversation = null;
-        let conversationUsers = [];
+        let friendUsers = [];
 
         for (let i = 0; i < conversations.length; i++) {
             let conversation = conversations[i];
@@ -21,18 +21,18 @@ class ConversationManager {
                 continue;
             }
 
-            let conversationUsername = conversation.participants.filter((item) => item !== currentUser.username)[0];
-            if (conversation.participants.length > 1 && conversationUsername == null) {
-                conversationUsername = currentUser.username;
+            let friendUsername = conversation.participants.filter((item) => item !== currentUser.username)[0];
+            if (conversation.participants.length > 1 && friendUsername == null) {
+                friendUsername = currentUser.username;
             }
 
-            let conversationUser = users.find((item) => item.username === conversationUsername);
-            html += this.createConversationCardHTML(conversation, conversationUser, currentConversationUser == null);
+            let friendUser = users.find((item) => item.username === friendUsername);
+            html += this.createConversationCardHTML(conversation, friendUser, currentFriendUser == null);
 
-            conversationUsers.push(conversationUser);
+            friendUsers.push(friendUser);
 
-            if (currentConversationUser == null) {
-                currentConversationUser = conversationUser;
+            if (currentFriendUser == null) {
+                currentFriendUser = friendUser;
                 currentConversation = conversation;
             }
         }
@@ -55,13 +55,27 @@ class ConversationManager {
                     cardEls[j].classList.remove("active");
                 }
 
-                this.createConversation(conversationUsers[i], conversations[i]);
+                this.createConversation(friendUsers[i], conversations[i]);
             });
         }
 
-        if (currentConversationUser != null) {
-            this.createConversation(currentConversationUser, currentConversation);
+        if (currentFriendUser != null) {
+            this.createConversation(currentFriendUser, currentConversation);
         }
+    }
+
+    static createConversation(currentFriendUser, currentConversation) {
+        DefaultAPI
+            .getMessagesByConversationId(currentConversation.id)
+            .then(
+                (messages) => {
+                    let conversationContainerEl = document.getElementsByClassName("conversationContainer")[0];
+                    conversationContainerEl.innerHTML = this.createConversationHTML(currentFriendUser, messages);
+                },
+                (error) => {
+                    console.log("No message in this conversation");
+                }
+            );
     }
 
     static createConversationCardHTML(conversation, conversationUser, isActive) {
@@ -82,16 +96,25 @@ class ConversationManager {
         return html;
     }
 
-    static createConversation(currentConversationUser, currentConversation) {
-        DefaultAPI
-            .getMessagesByConversationId(currentConversation.id)
-            .then(
-                (messages) => {
-                    console.log(messages);
-                },
-                (error) => {
-                    console.log("No message in this conversation");
-                }
-            );
+    static createConversationHTML(currentFriendUser, messages) {
+        let html = "<div class='conversation'>";
+
+        for (let i = 0; i < messages.length; i++) {
+            let message = messages[i];
+            if (message == null) {
+                continue;
+            }
+
+            if (message.from === currentFriendUser.username) {
+                html += "<p class='message friendMessage'>";
+            } else {
+                html += "<p class='message myMessage'>";
+            }
+
+            html += message.message;
+            html += "</p>";
+        }
+
+        return html;
     }
 }
