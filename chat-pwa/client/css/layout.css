@@ -15,22 +15,23 @@ header {
 }
 
 main {
-    height: calc(100vh - 58px - 38px);
+    /*height: calc(100vh - 58px - 38px);*/
+    height: calc(100vh - 58px);
     margin-top: 58px;
     overflow: hidden;
 }
 
-footer {
-    background-color: #e7e7e7;
-    text-align: right;
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    left: 0;
-}
+/*footer {*/
+/*    background-color: #e7e7e7;*/
+/*    text-align: right;*/
+/*    padding: 10px;*/
+/*    position: fixed;*/
+/*    bottom: 0;*/
+/*    right: 0;*/
+/*    left: 0;*/
+/*}*/
 
-footer span {
-    color: #a3a3a3;
-    font-size: 12px;
-}
+/*footer span {*/
+/*    color: #a3a3a3;*/
+/*    font-size: 12px;*/
+/*}*/
