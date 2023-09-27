@@ -1,0 +1,36 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+header {
+    background-color: #b4c5f5;
+    text-align: right;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+}
+
+main {
+    height: calc(100vh - 40px - 38px);
+    margin-top: 40px;
+    overflow: hidden;
+}
+
+footer {
+    background-color: #e7e7e7;
+    text-align: right;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+footer span {
+    color: #a3a3a3;
+    font-size: 12px;
+}
