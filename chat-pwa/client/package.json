@@ -1,0 +1,23 @@
+{
+  "name": "whatschat",
+  "private": true,
+  "homepage": "",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Marco Prescher",
+  "license": "GPLv3",
+  "main": "index.html",
+  "scripts": {
+    "build": "npm run build_src_prod",
+    "clean": "rimraf dist/* --glob",
+    "build_libs": "grunt build_webui",
+    "build_src_dev": "webpack",
+    "build_src_prod": "webpack --env prod"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "rimraf": "^5.0.5",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  }
+}
