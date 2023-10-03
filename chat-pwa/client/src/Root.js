@@ -10,15 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch((error) => {
                 console.warn(`Error: registration failed with ${error}`);
-            })
-            .finally(() => {
-                ChatApp.init().then(() => {
-                    console.log("init");
-                });
             });
-    } else {
-        ChatApp.init().then(() => {
-            console.log("init");
-        });
     }
+
+    ChatApp.init().then(() => {
+        console.log("init");
+    });
 }, false);
