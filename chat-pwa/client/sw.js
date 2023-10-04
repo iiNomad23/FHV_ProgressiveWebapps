@@ -12,11 +12,11 @@ const ASSETS_CACHE_NAME = `${ASSETS_CACHE_PREFIX}-${VERSION}`;
 // ];
 const ASSET_URLS = [
     "/",
-    "offline.html",
-    "images/daniel.jpg",
-    "images/manuel.jpg",
-    "images/guenther.jpg",
-    "images/franz.jpg"
+    "/offline.html",
+    "/images/daniel.jpg",
+    "/images/manuel.jpg",
+    "/images/guenther.jpg",
+    "/images/franz.jpg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -31,7 +31,7 @@ self.addEventListener("fetch", (event) => {
     const path = new URL(request.url).pathname;
 
     // if (ASSET_URLS.find((item) => request.url === item || path.includes(item))) {
-    if (ASSET_URLS.find((item) => path.includes(item))) {
+    if (ASSET_URLS.find((item) => item.includes(path))) {
         event.respondWith((async function () {
             const cache = await caches.open(ASSETS_CACHE_NAME);
             const cachedResponse = await cache.match(request);
