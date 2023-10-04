@@ -2,7 +2,10 @@
  * Includes conversation views and logic
  */
 
-class ConversationManager {
+import {DefaultAPI} from "./Api.js";
+import {ChatApp} from "./ChatApp.js";
+
+export class ConversationManager {
 
     static createConversationHeader() {
 

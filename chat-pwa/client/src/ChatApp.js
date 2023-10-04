@@ -2,7 +2,10 @@
  * Includes chat views and chat logic
  */
 
-class ChatApp {
+import {DefaultAPI} from "./Api.js";
+import {ConversationManager} from "./ConversationManager.js";
+
+export class ChatApp {
 
     static users = null;
     static currentUser = null;

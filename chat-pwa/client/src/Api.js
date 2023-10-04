@@ -15,7 +15,7 @@
  * body: JSON.stringify(data), // body data type must match "Content-Type" header
  */
 
-class DefaultAPI {
+export class DefaultAPI {
     static serverUrl = "http://localhost:5000";
 
     static getUsers() {

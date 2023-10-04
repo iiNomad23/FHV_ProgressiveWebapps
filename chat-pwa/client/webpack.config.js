@@ -12,9 +12,10 @@ module.exports = (env) => {
 
     let config = {
         entry: {
-            Main: {
+            main: {
                 import: [
                     './src/Root.js',
+                    './src/index.js'
                 ]
             },
         },
@@ -24,6 +25,13 @@ module.exports = (env) => {
                     test: /\.js$/,
                     exclude: /node_modules/
                 },
+                {
+                    test: /\.css$/,
+                    use: [
+                        'style-loader',
+                        'css-loader'
+                    ]
+                }
             ],
         },
         resolve: {
@@ -32,6 +40,7 @@ module.exports = (env) => {
         output: {
             filename: packageJsonInfo.name + '.js',
             path: path.resolve(__dirname, `dist/lib/js`),
+            clean: true,
         },
         plugins: [
             new CopyPlugin({
@@ -39,6 +48,11 @@ module.exports = (env) => {
                     {
                         from: path.resolve(__dirname, `index_dist.html`),
                         to: path.resolve(__dirname, `dist/index.html`),
+                        toType: "file",
+                    },
+                    {
+                        from: path.resolve(__dirname, `sw.js`),
+                        to: path.resolve(__dirname, `dist/sw.js`),
                         toType: "file",
                     },
                 ],
