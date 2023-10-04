@@ -3,6 +3,7 @@
  */
 
 import {ChatApp} from "./ChatApp.js";
+import {createBrowserHistory} from "../node_modules/history/history.development.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) {
@@ -14,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn(`Error: registration failed with ${error}`);
             });
     }
+
+    createBrowserHistory().push("/");
 
     ChatApp.init().then(() => {
         console.log("init");
