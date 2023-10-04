@@ -39,7 +39,7 @@ module.exports = (env) => {
         },
         output: {
             filename: packageJsonInfo.name + '.js',
-            path: path.resolve(__dirname, `dist/lib/js`),
+            path: path.resolve(__dirname, `dist`),
             clean: true,
         },
         plugins: [
@@ -48,6 +48,11 @@ module.exports = (env) => {
                     {
                         from: path.resolve(__dirname, `index_dist.html`),
                         to: path.resolve(__dirname, `dist/index.html`),
+                        toType: "file",
+                    },
+                    {
+                        from: path.resolve(__dirname, `offline.html`),
+                        to: path.resolve(__dirname, `dist/offline.html`),
                         toType: "file",
                     },
                     {

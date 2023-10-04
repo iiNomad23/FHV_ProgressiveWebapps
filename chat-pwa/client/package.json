@@ -8,17 +8,14 @@
   "license": "GPLv3",
   "main": "index.html",
   "scripts": {
-    "build": "npm run build_src_prod",
-    "clean": "rimraf dist/* --glob",
-    "build_libs": "grunt build_webui",
-    "build_src_dev": "webpack",
-    "build_src_prod": "webpack --env prod"
+    "build": "npm run build_prod",
+    "build_dev": "webpack",
+    "build_prod": "webpack --env prod"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
     "style-loader": "^3.3.3",
-    "rimraf": "^5.0.5",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   }
