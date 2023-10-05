@@ -10,40 +10,24 @@ export class ChatApp {
     static users = null;
     static currentUser = null;
 
-    static async init() {
-        if (this.users == null || this.currentUser == null) {
-            await this.displayUserSelection();
-        } else {
-            let selectedUserEl = document.getElementsByClassName("selectedUser")[0];
-            selectedUserEl.innerHTML = this.createNavBarUserAvatarHTML(this.currentUser.username);
+    static displayUserSelection(callback) {
+        let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
+        mainContainerEl.innerHTML = this.createUserSelectionHTML();
 
-            await this.displayConversations();
-        }
-    }
+        let imageContainerEls = document.getElementsByClassName('imageContainer');
+        for (let i = 0; i < imageContainerEls.length; i++) {
+            imageContainerEls[i].addEventListener('click', (e) => {
+                let userId = e.target;
+                this.currentUser = this.users[i];
 
-    static async displayUserSelection() {
-        try {
-            this.users = await DefaultAPI.getUsers();
+                let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
+                mainContainerEl.innerHTML = this.createChatViewHTML();
 
-            let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
-            mainContainerEl.innerHTML = this.createUserSelectionHTML();
+                let selectedUserEl = document.getElementsByClassName("selectedUser")[0];
+                selectedUserEl.innerHTML = this.createNavBarUserAvatarHTML(this.currentUser.username);
 
-            let imageContainerEls = document.getElementsByClassName('imageContainer');
-            for (let i = 0; i < imageContainerEls.length; i++) {
-                imageContainerEls[i].addEventListener('click', () => {
-                    this.currentUser = this.users[i];
-
-                    let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
-                    mainContainerEl.innerHTML = this.createChatViewHTML();
-
-                    let selectedUserEl = document.getElementsByClassName("selectedUser")[0];
-                    selectedUserEl.innerHTML = this.createNavBarUserAvatarHTML(this.currentUser.username);
-
-                    this.displayConversations();
-                });
-            }
-        } catch (e) {
-            console.error("fetch getUsers failed");
+                callback(this.currentUser);
+            });
         }
     }
 
@@ -73,7 +57,7 @@ export class ChatApp {
                 continue;
             }
 
-            html += "<div class='imageContainer'>";
+            html += "<div class='imageContainer' user_id='" + i + "'>";
             html += "<img src='" + DefaultAPI.serverUrl + "/images/" + user.username + ".jpg' alt='avatar'>";
             html += "</div>";
         }
