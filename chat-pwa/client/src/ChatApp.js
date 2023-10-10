@@ -17,8 +17,8 @@ export class ChatApp {
         let imageContainerEls = document.getElementsByClassName('imageContainer');
         for (let i = 0; i < imageContainerEls.length; i++) {
             imageContainerEls[i].addEventListener('click', (e) => {
-                let userId = e.target;
-                this.currentUser = this.users[i];
+                let username = e.target.getAttribute('data-username');
+                this.currentUser = this.users.find(item => item.username === username);
 
                 let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
                 mainContainerEl.innerHTML = this.createChatViewHTML();
@@ -57,7 +57,7 @@ export class ChatApp {
                 continue;
             }
 
-            html += "<div class='imageContainer' user_id='" + i + "'>";
+            html += "<div class='imageContainer' data-username='" + user.username + "'>";
             html += "<img src='" + DefaultAPI.serverUrl + "/images/" + user.username + ".jpg' alt='avatar'>";
             html += "</div>";
         }
