@@ -9,8 +9,11 @@ export class ChatApp {
 
     static users = null;
     static currentUser = null;
+    static currentConversationUser = null;
 
-    static displayUserSelection(callback) {
+    static displayUserSelection(registerConversationCallback, logoutCallback) {
+        this.logout();
+
         let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
         mainContainerEl.innerHTML = this.createUserSelectionHTML();
 
@@ -20,27 +23,33 @@ export class ChatApp {
                 let username = e.target.getAttribute('data-username');
                 this.currentUser = this.users.find(item => item.username === username);
 
-                let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
-                mainContainerEl.innerHTML = this.createChatViewHTML();
-
-                let selectedUserEl = document.getElementsByClassName("selectedUser")[0];
-                selectedUserEl.innerHTML = this.createNavBarUserAvatarHTML(this.currentUser.username);
-
-                callback(this.currentUser);
+                this.prepareChatViewHtml(logoutCallback);
+                ConversationManager.createConversations(registerConversationCallback);
             });
         }
     }
 
-    static async displayConversations() {
-        let conversations = await DefaultAPI.getConversations();
-        if (conversations == null) {
-            return; // TODO: add html that no conversation exist
-        }
+    static prepareChatViewHtml(logoutCallback) {
+        let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
+        mainContainerEl.innerHTML = this.createChatViewHTML();
 
-        conversations = conversations
-            .filter(item => item.participants.includes(this.currentUser.username));
+        let selectedUserEl = document.getElementsByClassName("selectedUser")[0];
+        selectedUserEl.innerHTML = this.createUserAvatarHTML(this.currentUser.username);
 
-        ConversationManager.createConversationCards(conversations, this.users, this.currentUser);
+        selectedUserEl.addEventListener("click", () => {
+            logoutCallback();
+        });
+    }
+
+    static logout() {
+        let selectedUserEl = document.getElementsByClassName("selectedUser")[0];
+
+        this.currentUser = null;
+        this.currentConversationUser = null;
+        localStorage.removeItem("chat-pwa-conversation-path");
+
+        selectedUserEl.innerHTML = "<span>SignIn</span>";
+        selectedUserEl.replaceWith(selectedUserEl.cloneNode(true)); // remove all listener
     }
 
     static createUserSelectionHTML() {
@@ -73,7 +82,7 @@ export class ChatApp {
         return html;
     }
 
-    static createNavBarUserAvatarHTML(username) {
+    static createUserAvatarHTML(username) {
         let html = "<div class='imageContainer'>";
         html += "<img src='" + DefaultAPI.serverUrl + "/images/" + username + ".jpg' alt='avatar'>";
         html += "</div>";

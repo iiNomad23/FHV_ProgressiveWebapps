@@ -7,37 +7,62 @@ import {ChatApp} from "./ChatApp.js";
 
 export class ConversationManager {
 
-    static createConversationHeader() {
+    static conversations = null;
+    static currentConversation = null;
 
+    static createConversations(callback) {
+        DefaultAPI
+            .getConversations()
+            .then(
+                (conversations) => {
+                    if (conversations == null) {
+                        return;
+                    }
+
+                    conversations = conversations.filter(item => item.participants.includes(ChatApp.currentUser.username));
+
+                    if (ChatApp.currentConversationUser != null) {
+                        if (ChatApp.currentConversationUser.username === ChatApp.currentUser.username) {
+                            ChatApp.currentConversationUser = null;
+                        }
+                    }
+
+                    this.conversations = conversations;
+                    this.createConversationCards(callback);
+                },
+                (error) => {
+                    console.log("Selected user has no conversations yet");
+                }
+            );
     }
 
-    static createConversationCards(conversations, users, currentUser) {
+    static createConversationCards(callback) {
         let html = "<div class='cardContainer'>";
 
-        let currentFriendUser = null;
-        let currentConversation = null;
-        let friendUsers = [];
+        let conversationUsers = [];
 
-        for (let i = 0; i < conversations.length; i++) {
-            let conversation = conversations[i];
+        for (let i = 0; i < this.conversations.length; i++) {
+            let conversation = this.conversations[i];
             if (conversation == null) {
                 continue;
             }
 
-            let friendUsername = conversation.participants.filter((item) => item !== currentUser.username)[0];
-            if (conversation.participants.length > 1 && friendUsername == null) {
-                friendUsername = currentUser.username;
+            let conversationUsername = conversation.participants.filter((item) => item !== ChatApp.currentUser.username)[0];
+            if (conversation.participants.length > 1 && conversationUsername == null) {
+                conversationUsername = ChatApp.currentUser.username;
             }
 
-            let friendUser = users.find((item) => item.username === friendUsername);
-            html += this.createConversationCardHTML(conversation, friendUser, currentFriendUser == null);
+            let conversationUser = ChatApp.users.find((item) => item.username === conversationUsername);
+            conversationUsers.push(conversationUser);
 
-            friendUsers.push(friendUser);
-
-            if (currentFriendUser == null) {
-                currentFriendUser = friendUser;
-                currentConversation = conversation;
+            if (ChatApp.currentConversationUser == null) {
+                ChatApp.currentConversationUser = conversationUser;
+                this.currentConversation = conversation;
+            } else if (ChatApp.currentConversationUser.username === conversationUser.username) {
+                this.currentConversation = conversation;
             }
+
+            html += this.createConversationCardHTML(conversation, conversationUser);
         }
 
         html += "</div>";
@@ -58,22 +83,23 @@ export class ConversationManager {
                     cardEls[j].classList.remove("active");
                 }
 
-                this.createConversation(friendUsers[i], conversations[i]);
+                this.currentConversation = this.conversations[i];
+                ChatApp.currentConversationUser = conversationUsers[i];
+
+                callback(ChatApp.currentUser, conversationUsers[i]);
             });
         }
 
-        if (currentFriendUser != null) {
-            this.createConversation(currentFriendUser, currentConversation);
-        }
+        callback(ChatApp.currentUser, ChatApp.currentConversationUser);
     }
 
-    static createConversation(currentFriendUser, currentConversation) {
+    static displayConversation() {
         DefaultAPI
-            .getMessagesByConversationId(currentConversation.id)
+            .getMessagesByConversationId(this.currentConversation.id)
             .then(
                 (messages) => {
                     let conversationContainerEl = document.getElementsByClassName("conversationContainer")[0];
-                    conversationContainerEl.innerHTML = this.createConversationHTML(currentFriendUser, messages);
+                    conversationContainerEl.innerHTML = this.createConversationHTML(messages);
                 },
                 (error) => {
                     console.log("No message in this conversation");
@@ -81,11 +107,16 @@ export class ConversationManager {
             );
     }
 
-    static createConversationCardHTML(conversation, conversationUser, isActive) {
-        let html = "<div class='card " + (isActive ? "active" : "") + "'>";
+    static createConversationCardHTML(conversation, conversationUser) {
+        let html;
+        if (ChatApp.currentConversationUser.username === conversationUser.username) {
+            html = "<div class='card active'>";
+        } else {
+            html = "<div class='card'>";
+        }
 
         html += "<div class='cardAvatar'>";
-        html += ChatApp.createNavBarUserAvatarHTML(conversationUser.username);
+        html += ChatApp.createUserAvatarHTML(conversationUser.username);
         html += "</div>";
 
         html += "<div class='cardInformation'>";
@@ -99,7 +130,7 @@ export class ConversationManager {
         return html;
     }
 
-    static createConversationHTML(currentFriendUser, messages) {
+    static createConversationHTML(messages) {
         let html = "<div class='conversation'>";
 
         for (let i = 0; i < messages.length; i++) {
@@ -108,7 +139,7 @@ export class ConversationManager {
                 continue;
             }
 
-            if (message.from === currentFriendUser.username) {
+            if (message.from === ChatApp.currentConversationUser.username) {
                 html += "<p class='message friendMessage'>";
             } else {
                 html += "<p class='message myMessage'>";
