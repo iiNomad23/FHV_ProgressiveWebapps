@@ -76,7 +76,7 @@ function registerNewUserAndConversation(history, path) {
         ChatApp.currentConversationUser = ChatApp.users.find(item => item.username === savedConversationUserName);
 
         if (ChatApp.currentUser != null) {
-            ChatApp.prepareChatViewHtml((user, conversationUser) => {
+            ChatApp.prepareChatViewHtml(() => {
                 history.push("/login");
             });
             ConversationManager.createConversations((user, conversationUser) => {

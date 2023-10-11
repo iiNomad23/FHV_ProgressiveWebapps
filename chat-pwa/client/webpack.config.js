@@ -60,6 +60,11 @@ module.exports = (env) => {
                         to: path.resolve(__dirname, `dist/sw.js`),
                         toType: "file",
                     },
+                    {
+                        from: path.resolve(__dirname, `manifest.json`),
+                        to: path.resolve(__dirname, `dist/manifest.json`),
+                        toType: "file",
+                    },
                 ],
             }),
         ],

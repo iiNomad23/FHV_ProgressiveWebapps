@@ -1,0 +1,13 @@
+{
+  "short_name": "WhatsChat",
+  "name": "WhatsChat PWA",
+  "icons": [
+    {
+      "src": "images/manifest_512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone"
+}
