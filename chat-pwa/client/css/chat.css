@@ -15,6 +15,12 @@
 .conversationContainer {
     flex: 1;
     background: rgba(235, 235, 235, 0.22);
+    display: flex;
+    flex-direction: column;
+}
+
+.messageInputContainer {
+    height: 150px;
 }
 
 .userSelectionContainer {
@@ -95,6 +101,10 @@
 
 .cardContainer > .active {
     background: #f9f9f9;
+}
+
+.conversations {
+    height: calc(100% - 150px);
 }
 
 .conversation {

@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             () => {
                 history.push("/login");
-            });
+            }
+        );
     });
 
     DefaultAPI.getUsers().then(

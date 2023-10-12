@@ -131,8 +131,8 @@ export class ConversationManager {
     }
 
     static createConversationHTML(messages) {
-        let html = "<div class='conversation'>";
-
+        let html = "<div class='conversations'>";
+        html += "<div class='conversation'>";
         for (let i = 0; i < messages.length; i++) {
             let message = messages[i];
             if (message == null) {
@@ -148,6 +148,13 @@ export class ConversationManager {
             html += message.message;
             html += "</p>";
         }
+        html += "</div>"; // conversation
+        html += "</div>"; // conversations
+
+        html += "<div class='messageInputContainer'>";
+        html += "<input type='text' class='messageInput'>";
+        html += "<button class='sendButton'>Send</button>"
+        html += "</div>";
 
         return html;
     }
