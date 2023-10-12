@@ -99,7 +99,14 @@ export class ConversationManager {
             .then(
                 (messages) => {
                     let conversationContainerEl = document.getElementsByClassName("conversationContainer")[0];
-                    conversationContainerEl.innerHTML = this.createConversationHTML(messages);
+                    if (conversationContainerEl.innerHTML === "") {
+                        conversationContainerEl.innerHTML = this.createConversationHTML();
+                    } else {
+                        let conversationEl = document.getElementsByClassName("conversation")[0];
+                        conversationEl.innerHTML = "";
+                    }
+
+                    this.appendMessages(messages);
                 },
                 (error) => {
                     console.log("No message in this conversation");
@@ -130,9 +137,25 @@ export class ConversationManager {
         return html;
     }
 
-    static createConversationHTML(messages) {
+    static createConversationHTML() {
         let html = "<div class='conversations'>";
         html += "<div class='conversation'>";
+        html += "</div>";
+        html += "</div>";
+
+        html += "<div class='messageInputContainer'>";
+        html += "<input type='text' class='messageInput' placeholder='Message...'>";
+        html += "<img src='/images/send.png' class='sendIcon' alt='Send Message'>"
+        html += "</div>";
+
+        return html;
+    }
+
+    static appendMessages(messages) {
+        let conversationEl = document.getElementsByClassName("conversation")[0];
+        let html = "";
+
+        messages = messages ?? [];
         for (let i = 0; i < messages.length; i++) {
             let message = messages[i];
             if (message == null) {
@@ -148,14 +171,7 @@ export class ConversationManager {
             html += message.message;
             html += "</p>";
         }
-        html += "</div>"; // conversation
-        html += "</div>"; // conversations
 
-        html += "<div class='messageInputContainer'>";
-        html += "<input type='text' class='messageInput' placeholder='Message...'>";
-        html += "<img src='/images/send.png' class='sendIcon' alt='Send Message'>"
-        html += "</div>";
-
-        return html;
+        conversationEl.innerHTML += html;
     }
 }

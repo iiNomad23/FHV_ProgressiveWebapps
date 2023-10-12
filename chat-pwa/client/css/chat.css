@@ -128,6 +128,7 @@
 .conversations {
     height: calc(100% - 30px - 12px - 58px);
     width: 100%;
+    overflow: auto;
 }
 
 .conversation {
