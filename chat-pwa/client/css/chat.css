@@ -12,17 +12,6 @@
     border-right-color: #b9b9b9;
 }
 
-.conversationContainer {
-    flex: 1;
-    background: rgba(235, 235, 235, 0.22);
-    display: flex;
-    flex-direction: column;
-}
-
-.messageInputContainer {
-    height: 150px;
-}
-
 .userSelectionContainer {
     z-index: 1;
     position: absolute;
@@ -103,8 +92,42 @@
     background: #f9f9f9;
 }
 
+.conversationContainer {
+    flex: 1;
+    background: rgba(235, 235, 235, 0.22);
+    display: flex;
+    flex-direction: column;
+}
+
+.messageInputContainer {
+    height: 30px;
+    width: 100%;
+    padding: 6px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #d7deff;
+}
+
+.messageInput {
+    height: 100%;
+    width: 100%;
+    outline: none;
+    border: none;
+    background: #d7deff;
+    margin: 0 5px;
+    color: #3c3c3c;
+}
+
+.sendIcon {
+    width: 25px;
+    height: 20px;
+    padding: 10px;
+}
+
 .conversations {
-    height: calc(100% - 150px);
+    height: calc(100% - 30px - 12px - 58px);
+    width: 100%;
 }
 
 .conversation {

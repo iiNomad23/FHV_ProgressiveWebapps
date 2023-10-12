@@ -152,8 +152,8 @@ export class ConversationManager {
         html += "</div>"; // conversations
 
         html += "<div class='messageInputContainer'>";
-        html += "<input type='text' class='messageInput'>";
-        html += "<button class='sendButton'>Send</button>"
+        html += "<input type='text' class='messageInput' placeholder='Message...'>";
+        html += "<img src='/images/send.png' class='sendIcon' alt='Send Message'>"
         html += "</div>";
 
         return html;
