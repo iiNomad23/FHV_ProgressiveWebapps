@@ -136,17 +136,22 @@
 
 .conversation {
     margin: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 .message {
     padding: 10px;
     border-radius: 10px;
+    max-width: 80%;
 }
 
 .myMessage {
     background: #b5f9b5;
+    place-self: flex-end;
 }
 
 .friendMessage {
     background: #e1dede;
+    place-self: flex-start;
 }

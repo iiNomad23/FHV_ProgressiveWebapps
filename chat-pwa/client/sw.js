@@ -62,7 +62,6 @@ self.addEventListener("fetch", (event) => {
         })());
     } else if (ENDPOINTS_TO_CACHE.find((item) => item.includes(path) || path.endsWith(OBJECT_STORE_NAMES.messages))) {
         event.respondWith((async function () {
-
             let storagePath = path;
             if (path.includes(OBJECT_STORE_NAMES.messages)) {
                 storagePath = OBJECT_STORE_NAMES.messages;
@@ -73,7 +72,7 @@ self.addEventListener("fetch", (event) => {
                 await storeResponseInIndexedDB(response.clone(), storagePath, path);
                 return response;
             } catch (e) {
-                return getResponseFromIndexedDB(storagePath);
+                return getResponseFromIndexedDB(storagePath, path);
             }
         })());
     }
@@ -103,14 +102,58 @@ function createObjectStoreItems() {
     };
 }
 
-function getResponseFromIndexedDB(storagePath) {
-    switch (storagePath) {
-        case OBJECT_STORE_NAMES.users:
-            break;
-        case OBJECT_STORE_NAMES.conversations:
-            break;
-        case OBJECT_STORE_NAMES.messages:
-    }
+async function getResponseFromIndexedDB(storagePath, path) {
+    const dbObject = await new Promise((resolve, reject) => {
+        const openRequest = indexedDB.open(INDEXED_DB_NAME, VERSION);
+
+        openRequest.onsuccess = () => {
+            const db = openRequest.result;
+
+            const transaction = db.transaction(storagePath, 'readonly');
+            let storedObject;
+
+            switch (storagePath) {
+                case OBJECT_STORE_NAMES.users:
+                case OBJECT_STORE_NAMES.conversations:
+                    storedObject = transaction
+                        .objectStore(storagePath)
+                        .getAll();
+
+                    storedObject.onsuccess = () => resolve(storedObject.result);
+                    storedObject.onerror = (err) => reject(err);
+
+                    break;
+
+                case OBJECT_STORE_NAMES.messages:
+                    let conversationId = path.split("/")[2];
+                    conversationId = parseInt(conversationId) || null;
+
+                    storedObject = transaction
+                        .objectStore(storagePath)
+                        .get(conversationId);
+
+                    storedObject.onsuccess = () => {
+                        if (storedObject.result == null) {
+                            resolve(storedObject.result);
+                        } else {
+                            resolve(storedObject.result.messages);
+                        }
+                    };
+                    storedObject.onerror = (err) => reject(err);
+            }
+        }
+
+        openRequest.onerror = (err) => reject(err);
+    })
+
+    let responseData = dbObject != null && dbObject.length > 0 ? JSON.stringify(dbObject) : "";
+
+    return new Response(responseData, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        status: 200
+    });
 }
 
 async function storeResponseInIndexedDB(response, storagePath, path) {
@@ -133,10 +176,14 @@ async function storeResponseInIndexedDB(response, storagePath, path) {
 
             case OBJECT_STORE_NAMES.messages:
                 let conversationId = path.split("/")[2];
+                conversationId = parseInt(conversationId) || null;
+
                 store.put({
-                    conversationId: parseInt(conversationId),
+                    conversationId: conversationId,
                     messages: result
                 });
         }
     }
+
+    openRequest.onerror = () => console.log("storage of " + storagePath + " in indexed db went wrong");
 }

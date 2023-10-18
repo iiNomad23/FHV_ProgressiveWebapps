@@ -109,7 +109,13 @@ export class ConversationManager {
                     this.appendMessages(messages);
                 },
                 (error) => {
-                    console.log("No message in this conversation");
+                    let conversationContainerEl = document.getElementsByClassName("conversationContainer")[0];
+                    if (conversationContainerEl.innerHTML === "") {
+                        conversationContainerEl.innerHTML = this.createConversationHTML();
+                    } else {
+                        let conversationEl = document.getElementsByClassName("conversation")[0];
+                        conversationEl.innerHTML = "<span>No conversation with this person stored</span>";
+                    }
                 }
             );
     }
