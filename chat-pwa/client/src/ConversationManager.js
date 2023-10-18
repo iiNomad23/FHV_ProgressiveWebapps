@@ -101,6 +101,7 @@ export class ConversationManager {
                     let conversationContainerEl = document.getElementsByClassName("conversationContainer")[0];
                     if (conversationContainerEl.innerHTML === "") {
                         conversationContainerEl.innerHTML = this.createConversationHTML();
+                        this.setMessageInputEvents();
                     } else {
                         let conversationEl = document.getElementsByClassName("conversation")[0];
                         conversationEl.innerHTML = "";
@@ -112,6 +113,7 @@ export class ConversationManager {
                     let conversationContainerEl = document.getElementsByClassName("conversationContainer")[0];
                     if (conversationContainerEl.innerHTML === "") {
                         conversationContainerEl.innerHTML = this.createConversationHTML();
+                        this.setMessageInputEvents();
                     } else {
                         let conversationEl = document.getElementsByClassName("conversation")[0];
                         conversationEl.innerHTML = "<span>No conversation with this person stored</span>";
@@ -157,24 +159,67 @@ export class ConversationManager {
         return html;
     }
 
-    static appendMessages(messages) {
+    static handleSendMessage(message) {
+        let messageObj = {
+            from: ChatApp.currentUser.username,
+            message: message
+        }
+
+        this.appendMessages([messageObj]);
+
+        DefaultAPI.sendMessagesByConversationId(this.currentConversation.id, messageObj)
+            .then(
+                (result) => {
+                    console.log("successfully stored message");
+                },
+                (err) => {
+                    console.log("error sending message");
+                }
+            );
+    }
+
+    static setMessageInputEvents() {
+        let messageInputEl = document.getElementsByClassName("messageInput")[0];
+        messageInputEl.addEventListener("keyup", (event) => {
+            if (this.currentConversation.id == null || messageInputEl.value == null || messageInputEl.value === "") {
+                return;
+            }
+
+            if (event.key === "Enter") {
+                this.handleSendMessage(messageInputEl.value);
+                messageInputEl.value = "";
+            }
+        });
+
+        let sendIconEl = document.getElementsByClassName("sendIcon")[0];
+        sendIconEl.addEventListener("click", (event) => {
+            if (this.currentConversation.id == null || messageInputEl.value == null || messageInputEl.value === "") {
+                return;
+            }
+
+            this.handleSendMessage(messageInputEl.value);
+            messageInputEl.value = "";
+        });
+    }
+
+    static appendMessages(messageObjs) {
         let conversationEl = document.getElementsByClassName("conversation")[0];
         let html = "";
 
-        messages = messages ?? [];
-        for (let i = 0; i < messages.length; i++) {
-            let message = messages[i];
-            if (message == null) {
+        messageObjs = messageObjs ?? [];
+        for (let i = 0; i < messageObjs.length; i++) {
+            let messageObj = messageObjs[i];
+            if (messageObj == null) {
                 continue;
             }
 
-            if (message.from === ChatApp.currentConversationUser.username) {
+            if (messageObj.from === ChatApp.currentConversationUser.username) {
                 html += "<p class='message friendMessage'>";
             } else {
                 html += "<p class='message myMessage'>";
             }
 
-            html += message.message;
+            html += messageObj.message;
             html += "</p>";
         }
 

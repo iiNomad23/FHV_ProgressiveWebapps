@@ -126,6 +126,11 @@
     width: 25px;
     height: 20px;
     padding: 10px;
+    cursor: pointer;
+}
+
+.sendIcon:hover {
+    background-color: aliceblue;
 }
 
 .conversations {
@@ -144,6 +149,7 @@
     padding: 10px;
     border-radius: 10px;
     max-width: 80%;
+    margin: 2px 0;
 }
 
 .myMessage {

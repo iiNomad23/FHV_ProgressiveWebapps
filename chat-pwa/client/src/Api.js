@@ -65,4 +65,24 @@ export class DefaultAPI {
             }
         });
     }
+
+    static sendMessagesByConversationId(id, data) {
+        return new Promise((resolve, reject) => {
+            try {
+                fetch(this.serverUrl + "/conversations/" + id + "/messages", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                }).then((response) => {
+                    resolve(response.json());
+                }).catch((err) => {
+                    reject(err);
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
 }

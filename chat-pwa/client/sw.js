@@ -69,7 +69,7 @@ self.addEventListener("fetch", (event) => {
 
             try {
                 const response = await fetch(request);
-                await storeResponseInIndexedDB(response.clone(), storagePath, path);
+                await storeResponseInIndexedDB(response.clone(), storagePath, path, request.method);
                 return response;
             } catch (e) {
                 return getResponseFromIndexedDB(storagePath, path);
@@ -103,7 +103,20 @@ function createObjectStoreItems() {
 }
 
 async function getResponseFromIndexedDB(storagePath, path) {
-    const dbObject = await new Promise((resolve, reject) => {
+    const dbObject = await getIndexedDBEntry(storagePath, path);
+
+    let responseData = dbObject != null && dbObject.length > 0 ? JSON.stringify(dbObject) : "";
+
+    return new Response(responseData, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        status: 200
+    });
+}
+
+function getIndexedDBEntry(storagePath, path) {
+    return new Promise((resolve, reject) => {
         const openRequest = indexedDB.open(INDEXED_DB_NAME, VERSION);
 
         openRequest.onsuccess = () => {
@@ -144,20 +157,20 @@ async function getResponseFromIndexedDB(storagePath, path) {
         }
 
         openRequest.onerror = (err) => reject(err);
-    })
-
-    let responseData = dbObject != null && dbObject.length > 0 ? JSON.stringify(dbObject) : "";
-
-    return new Response(responseData, {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        status: 200
     });
 }
 
-async function storeResponseInIndexedDB(response, storagePath, path) {
+async function storeResponseInIndexedDB(response, storagePath, path, requestMethod) {
     let result = await response.json();
+
+    if (storagePath === OBJECT_STORE_NAMES.messages && requestMethod === "POST") {
+        let dbObject = await getIndexedDBEntry(storagePath, path);
+
+        dbObject = dbObject ?? [];
+        dbObject.push(result);
+
+        result = dbObject;
+    }
 
     const openRequest = indexedDB.open(INDEXED_DB_NAME, VERSION);
     openRequest.onsuccess = () => {
