@@ -15,6 +15,10 @@
     border-right-color: #b9b9b9;
 }
 
+.conversationCardContainerFullWidth {
+    width: 100% !important;
+}
+
 .userSelectionContainer {
     z-index: 1;
     background: #cdcdcdc7;
@@ -48,7 +52,6 @@
 .selectedUser {
     height: 38px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
 }
 
@@ -120,6 +123,13 @@
     background: #d7deff;
     margin: 0 5px;
     color: #3c3c3c;
+}
+
+.backIcon {
+    width: 25px;
+    height: 25px;
+    padding: 10px;
+    cursor: pointer;
 }
 
 .sendIcon {

@@ -7,11 +7,20 @@ import {ConversationManager} from "./ConversationManager.js";
 import {DefaultAPI} from "./Api.js";
 import {createHashHistory} from "../lib/history.production.min.js";
 
+window.onresize = () => {
+    ChatApp.checkViews(true);
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
             .then((registration) => {
-                console.log(`Success: ${registration.scope}`);
+                if (registration.installing) {
+                    // dirty workaround for "client not caching if it is the first time for the service worker"
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 300);
+                }
             })
             .catch((error) => {
                 console.warn(`Error: registration failed with ${error}`);

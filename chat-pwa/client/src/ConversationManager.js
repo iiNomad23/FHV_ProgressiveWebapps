@@ -10,7 +10,7 @@ export class ConversationManager {
     static conversations = null;
     static currentConversation = null;
 
-    static createConversations(callback) {
+    static createConversations(registerConversationCallback) {
         DefaultAPI
             .getConversations()
             .then(
@@ -28,7 +28,7 @@ export class ConversationManager {
                     }
 
                     this.conversations = conversations;
-                    this.createConversationCards(callback);
+                    this.createConversationCards(registerConversationCallback);
                 },
                 (error) => {
                     console.log("Selected user has no conversations yet");
@@ -36,7 +36,7 @@ export class ConversationManager {
             );
     }
 
-    static createConversationCards(callback) {
+    static createConversationCards(registerConversationCallback) {
         let html = "<div class='cardContainer'>";
 
         let conversationUsers = [];
@@ -86,11 +86,13 @@ export class ConversationManager {
                 this.currentConversation = this.conversations[i];
                 ChatApp.currentConversationUser = conversationUsers[i];
 
-                callback(ChatApp.currentUser, conversationUsers[i]);
+                ChatApp.checkViews();
+
+                registerConversationCallback(ChatApp.currentUser, conversationUsers[i]);
             });
         }
 
-        callback(ChatApp.currentUser, ChatApp.currentConversationUser);
+        registerConversationCallback(ChatApp.currentUser, ChatApp.currentConversationUser);
     }
 
     static displayConversation() {
