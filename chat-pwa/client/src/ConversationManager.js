@@ -101,6 +101,7 @@ export class ConversationManager {
             .then(
                 (messages) => {
                     let conversationContainerEl = document.getElementsByClassName("conversationContainer")[0];
+
                     if (conversationContainerEl.innerHTML === "") {
                         conversationContainerEl.innerHTML = this.createConversationHTML();
                         this.setMessageInputEvents();
@@ -206,6 +207,14 @@ export class ConversationManager {
 
     static appendMessages(messageObjs) {
         let conversationEl = document.getElementsByClassName("conversation")[0];
+
+        if (conversationEl.innerHTML === "" && messageObjs.length <= 0) {
+            conversationEl.innerHTML = "<span>No conversation with this person stored</span>";
+            return;
+        } else if (conversationEl.innerHTML === "<span>No conversation with this person stored</span>") {
+            conversationEl.innerHTML = "";
+        }
+
         let html = "";
 
         messageObjs = messageObjs ?? [];

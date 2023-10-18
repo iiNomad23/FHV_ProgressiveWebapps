@@ -12,6 +12,8 @@ const URLS_TO_CACHE = [
     "/images/guenther.jpg",
     "/images/franz.jpg",
     "/images/manifest_512x512.png",
+    "/images/send.png",
+    "/images/back.png",
     "/css/layout.css",
     "/css/chat.css",
     "/lib/history.production.min.js",
