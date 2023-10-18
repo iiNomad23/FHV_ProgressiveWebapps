@@ -1,4 +1,4 @@
-# Whatschat
+# WhatsChat
 
 ## How to run
 install node modules :)
