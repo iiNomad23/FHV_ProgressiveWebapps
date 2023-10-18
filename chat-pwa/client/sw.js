@@ -2,21 +2,27 @@ const VERSION = 1;
 const ASSETS_CACHE_PREFIX = "mpr-pwa-assets";
 const ASSETS_CACHE_NAME = `${ASSETS_CACHE_PREFIX}-${VERSION}`;
 
-const ASSET_URLS = [
+const URLS_TO_CACHE = [
     "/",
-    "/offline.html",
     "/manifest.json",
     "/images/daniel.jpg",
     "/images/manuel.jpg",
     "/images/guenther.jpg",
     "/images/franz.jpg",
-    "/images/manifest_512x512.png"
+    "/images/manifest_512x512.png",
+    "/css/layout.css",
+    "/css/chat.css",
+    "/lib/history.production.min.js",
+    "/src/Api.js",
+    "/src/ChatApp.js",
+    "/src/ConversationManager.js",
+    "/src/Root.js"
 ];
 
 self.addEventListener("install", (event) => {
     event.waitUntil(
         caches.open(ASSETS_CACHE_NAME)
-            .then((cache) => cache.addAll(ASSET_URLS))
+            .then((cache) => cache.addAll(URLS_TO_CACHE))
     );
 });
 
@@ -24,20 +30,13 @@ self.addEventListener("fetch", (event) => {
     const {request} = event;
     const path = new URL(request.url).pathname;
 
-    if (ASSET_URLS.find((item) => item.includes(path))) {
+    if (URLS_TO_CACHE.find((item) => item.includes(path))) {
         event.respondWith((async function () {
             const cache = await caches.open(ASSETS_CACHE_NAME);
             const cachedResponse = await cache.match(request);
 
             if (cachedResponse) {
-                if (cachedResponse.url === "http://localhost:5000/") {
-                    return await fetch(request)
-                        .catch(() => {
-                            return caches.match("./offline.html");
-                        });
-                } else {
-                    return cachedResponse;
-                }
+                return cachedResponse;
             }
 
             const response = await fetch(request);

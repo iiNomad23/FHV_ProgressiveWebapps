@@ -25,9 +25,11 @@ export class DefaultAPI {
                     method: "GET",
                 }).then((response) => {
                     resolve(response.json());
+                }).catch((err) => {
+                    reject(err);
                 });
-            } catch (e) {
-                reject(e);
+            } catch (err) {
+                reject(err);
             }
         });
     }
@@ -39,9 +41,11 @@ export class DefaultAPI {
                     method: "GET",
                 }).then((response) => {
                     resolve(response.json());
+                }).catch((err) => {
+                    reject(err);
                 });
-            } catch (e) {
-                reject(e);
+            } catch (err) {
+                reject(err);
             }
         });
     }
@@ -53,9 +57,11 @@ export class DefaultAPI {
                     method: "GET",
                 }).then((response) => {
                     resolve(response.json());
+                }).catch((err) => {
+                    reject(err);
                 });
-            } catch (e) {
-                reject(e);
+            } catch (err) {
+                reject(err);
             }
         });
     }

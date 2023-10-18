@@ -51,11 +51,6 @@ module.exports = (env) => {
                         toType: "file",
                     },
                     {
-                        from: path.resolve(__dirname, `offline.html`),
-                        to: path.resolve(__dirname, `dist/offline.html`),
-                        toType: "file",
-                    },
-                    {
                         from: path.resolve(__dirname, `sw.js`),
                         to: path.resolve(__dirname, `dist/sw.js`),
                         toType: "file",

@@ -5,7 +5,7 @@
 import {ChatApp} from "./ChatApp.js";
 import {ConversationManager} from "./ConversationManager.js";
 import {DefaultAPI} from "./Api.js";
-import {createHashHistory} from "https://unpkg.com/history/history.production.min.js";
+import {createHashHistory} from "../lib/history.production.min.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) {
@@ -55,6 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         (err) => {
             console.error(`fetch getUsers failed: ${err}`);
+
+            let mainContainerEl = document.getElementsByClassName("chatContainer")[0];
+            mainContainerEl.innerHTML = "<span class='loader'></span>";
+
+            document.querySelector('.selectedUser span').textContent = "You're offline :(";
         }
     );
 }, false);
