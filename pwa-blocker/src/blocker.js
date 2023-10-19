@@ -1,6 +1,6 @@
-import { giveMePi } from './modules/madhava-leibniz.js';
+import {giveMePi} from './modules/madhava-leibniz.js';
 
-const TIME_FORMAT = Intl.DateTimeFormat('de-DE', { hour: 'numeric', minute: 'numeric', second: 'numeric' });
+const TIME_FORMAT = Intl.DateTimeFormat('de-DE', {hour: 'numeric', minute: 'numeric', second: 'numeric'});
 
 /* HTML element IDs */
 const EXECUTION_MODE_ID = 'executionMode';
@@ -10,6 +10,26 @@ const BLOCKER_ID = 'blocker';
 const INC_COUNTER_ID = 'incCounter';
 const RUN_BLOCKER_ID = 'runBlocker';
 const PI_ID = 'pi';
+
+let dedicatedWorker;
+if (window.Worker) {
+    dedicatedWorker = new Worker(
+        new URL('dedicatedWorker.js', import.meta.url),
+        { type: 'module', name: 'simple worker' }
+    );
+    dedicatedWorker.onmessage = (event) => {
+        let data = event.data ?? {};
+
+        switch (data.message) {
+            case "giveMePi":
+                signalIdleState(data.pi);
+                break;
+
+            default:
+        }
+    }
+}
+
 
 /**
  * Update UI to state "running"
@@ -22,7 +42,7 @@ function signalRunningState() {
 
 /**
  * Show the approximate value for π and update UI to state "idle".
- * @param {*} guess 
+ * @param {*} guess
  */
 function signalIdleState(guess) {
     console.log(`We know π ≅ ${guess.pi} bounded by [${guess.piMin}, ${guess.piMax}]`);
@@ -36,9 +56,8 @@ function signalIdleState(guess) {
 }
 
 function incCounter() {
-    var counter = document.getElementById(COUNTER_ID);
-    var value = Number(counter.innerHTML) + 1;
-    counter.innerHTML = value;
+    let counter = document.getElementById(COUNTER_ID);
+    counter.innerHTML = (Number(counter.innerHTML) + 1).toString();
 }
 
 function runBlocker(seconds) {
@@ -55,7 +74,7 @@ function block(seconds) {
     if (executionMode === 'shared worker') {
         //let a shared worker perform the computation
     } else if (executionMode === 'dedicated worker') {
-        //
+        dedicatedWorker.postMessage({message: "giveMePi", seconds: 5});
     } else {
         /* progressive degrade to single threaded behavior */
         let guess = giveMePi(5);
@@ -65,8 +84,9 @@ function block(seconds) {
 
 //Implementation of a clock.
 //The display of time fades in and out, which is realized by changing the css class.
-var toggle = true;
-var localTime = TIME_FORMAT.format(new Date());
+let toggle = true;
+let localTime = TIME_FORMAT.format(new Date());
+
 function updateClock() {
     const now = TIME_FORMAT.format(new Date());
     if (now !== localTime) {
