@@ -16,5 +16,5 @@ onmessage = (event) => {
 }
 
 onerror = (errorEvent) => {
-    console.debug(`Error in worker: ${errorEvent.message}`);
+    console.log(`Error in worker: ${errorEvent.message}`);
 }

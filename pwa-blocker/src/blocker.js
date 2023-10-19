@@ -30,6 +30,29 @@ if (window.Worker) {
     }
 }
 
+let sharedWorker;
+if (window.SharedWorker) {
+    sharedWorker = new SharedWorker(
+        new URL('./sharedWorker.js', import.meta.url),
+        { type: 'module', name: 'shared worker' }
+    );
+    sharedWorker.port.onmessage = (event) => {
+        let data = event.data ?? {};
+
+        switch (data.message) {
+            case "giveMePi":
+                signalIdleState(data.pi);
+                break;
+
+            case "running":
+                signalRunningState();
+                break;
+
+            default:
+        }
+    }
+}
+
 
 /**
  * Update UI to state "running"
@@ -72,7 +95,7 @@ function block(seconds) {
     const executionMode = execElem.options[execElem.selectedIndex].text;
 
     if (executionMode === 'shared worker') {
-        //let a shared worker perform the computation
+        sharedWorker.port.postMessage({message: "giveMePi", seconds: 5});
     } else if (executionMode === 'dedicated worker') {
         dedicatedWorker.postMessage({message: "giveMePi", seconds: 5});
     } else {
