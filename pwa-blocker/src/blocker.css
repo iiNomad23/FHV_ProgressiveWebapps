@@ -1,0 +1,59 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+div.banner {
+    width: 80%;
+}
+
+.banner div {
+    width: 100%;
+    color: white;
+    text-align-last: center;
+    font-size: 64px;
+    border-radius: 8px;
+    margin: 24px 0;
+}
+
+#clock {
+    background-color: magenta;
+    transition: color 1s;
+}
+
+#clock:hover {
+    background-color: darkmagenta;
+}
+
+div#clock.fade {
+    color: #ffffff44;
+}
+
+#counter {
+    background-color: blue;
+}
+
+#counter:hover {
+    background-color: darkblue;
+}
+
+#blocker {
+    background-color: green;
+}
+
+#blocker:hover {
+    background-color: darkgreen;
+}
+
+.idle {
+    background-color: green;
+}
+
+.running {
+    background-color: red !important;
+}
