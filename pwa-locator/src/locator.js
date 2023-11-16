@@ -1,5 +1,8 @@
 import arrowUpImage from './arrow-up-circle.svg';
 import cameraImage from './camera.svg';
+import markerPath2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerPath from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 const COORD_FORMATTER = Intl.NumberFormat('de-DE', {
     minimumFractionDigits: 6,
@@ -25,17 +28,17 @@ const LOCATION_LEFT_ID = 'location-left';
 const LOCATION_MIDDLE_ID = 'location-middle';
 const CAMERA_INPUT_ID = 'camera';
 
-const LAST_COORDS_KEY = 'last-coords';
+const LS_LAST_COORDS_KEY = 'lastCoordinates';
+const LS_IMAGES = 'images';
 
-//map state
-var map;
-var ranger;
-var headingMarker;
-var headingImage;
+let map;
+let ranger;
+let headingMarker;
+let headingImage;
 
 /* Geolocation service */
-var geo;
-var watcherId;
+let geo;
+let watcherId;
 
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
@@ -52,14 +55,41 @@ function configureMap(latLngArray) {
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+
     ranger = L.circle(latLngArray, {radius: 100.0}).addTo(map);
 
     headingImage = new Image(31, 31);
     headingImage.src = arrowUpImage;
     const headingIcon = L.divIcon({html: headingImage, iconSize: [31, 31], className: ''});
     headingMarker = L.marker([0, 0], {icon: headingIcon});
+
+    const markerIcon = new L.Icon.Default({
+        iconUrl: markerPath,
+        iconRetinaUrl: markerPath2x,
+        shadowUrl: markerShadow
+    });
+
+    let images = localStorage.getItem(LS_IMAGES);
+    if (images == null) {
+        images = JSON.stringify({});
+    }
+    images = JSON.parse(images);
+
+    Object.keys(images).forEach((key) => {
+        let coords = key.split('x');
+        let latitude = coords[0];
+        let longitude = coords[1];
+        let photo = images[key];
+
+        L.marker([latitude, longitude], { icon: markerIcon }).addTo(map)
+            .bindPopup(`
+                <div class="popup-container">
+                    <img src='${photo}' width='200px' alt="Marker Image">          
+                </div>
+            `);
+    });
 }
 
 function updatePosition(position, zoom) {
@@ -68,11 +98,9 @@ function updatePosition(position, zoom) {
     const cameraButton = document.getElementById(CAMERA_INPUT_ID);
 
     const coords = position.coords;
-    const ll = [coords.latitude, coords.longitude];
+    const coordinateArr = [coords.latitude, coords.longitude];
 
-    console.debug(`got new coordinates: ${ll}`);
-
-    localStorage.setItem(LAST_COORDS_KEY, JSON.stringify(ll));
+    localStorage.setItem(LS_LAST_COORDS_KEY, JSON.stringify(coordinateArr));
 
     locatorLeftDiv.innerHTML = `
         <dl>
@@ -94,27 +122,26 @@ function updatePosition(position, zoom) {
         </dl>`;
 
     if (zoom) {
-        map.setView(ll, zoom);
+        map.setView(coordinateArr, zoom);
     } else {
-        map.setView(ll);
+        map.setView(coordinateArr);
     }
-    ranger.setLatLng(ll);
+    ranger.setLatLng(coordinateArr);
     ranger.setRadius(coords.accuracy);
+
     if (coords.heading) {
-        headingMarker.setLatLng(ll).addTo(map);
+        headingMarker.setLatLng(coordinateArr).addTo(map);
         headingImage.style.transform = `rotate(${coords.heading}deg)`;
     } else {
         headingMarker.removeFrom(map);
     }
 
-    //activate camera button
+    // activate camera button
     cameraButton.disabled = false;
 }
 
-function openCamera(event) {
-    const url = `/camera.html`;
-    console.debug(`navigating to: ${url}`);
-    window.location.href = url;
+function openCamera() {
+    window.location.href = `/camera.html`;
 }
 
 function logError(err) {
@@ -125,16 +152,16 @@ function logError(err) {
 window.onload = () => {
     const cameraButton = document.getElementById(CAMERA_INPUT_ID);
 
-    //setup UI
+    // setup UI
     cameraButton.src = cameraImage;
     cameraButton.onclick = openCamera;
 
-    //init leaflet
-    const ll = JSON.parse(localStorage.getItem(LAST_COORDS_KEY));
-    if (ll) {
-        configureMap(ll)
+    // init leaflet
+    const coordinateArr = JSON.parse(localStorage.getItem(LS_LAST_COORDS_KEY));
+    if (coordinateArr) {
+        configureMap(coordinateArr)
     } else {
-        //take FHV position as default
+        // FHV position as default
         configureMap([47.406653, 9.744844]);
     }
 
@@ -159,15 +186,12 @@ window.onload = () => {
             enableHighAccuracy: true,
             maximumAge: 10000
         });
-    } else {
-        locatorDiv.innerHTML = 'Geolocation is not available.'
     }
-
 }
 
 window.onbeforeunload = () => {
     if (geo) {
-        console.debug(`will clear the watcher ${watcherId}`);
+        console.log(`will clear the watcher ${watcherId}`);
         geo.clearWatch(watcherId);
     }
 }
