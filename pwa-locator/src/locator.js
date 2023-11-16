@@ -36,7 +36,6 @@ let ranger;
 let headingMarker;
 let headingImage;
 
-/* Geolocation service */
 let geo;
 let watcherId;
 
@@ -83,7 +82,7 @@ function configureMap(latLngArray) {
         let longitude = coords[1];
         let photo = images[key];
 
-        L.marker([latitude, longitude], { icon: markerIcon }).addTo(map)
+        L.marker([latitude, longitude], {icon: markerIcon}).addTo(map)
             .bindPopup(`
                 <div class="popup-container">
                     <img src='${photo}' width='200px' alt="Marker Image">          
@@ -144,11 +143,6 @@ function openCamera() {
     window.location.href = `/camera.html`;
 }
 
-function logError(err) {
-    console.error(err.message);
-}
-
-/* setup component */
 window.onload = () => {
     const cameraButton = document.getElementById(CAMERA_INPUT_ID);
 
@@ -157,13 +151,10 @@ window.onload = () => {
     cameraButton.onclick = openCamera;
 
     // init leaflet
-    const coordinateArr = JSON.parse(localStorage.getItem(LS_LAST_COORDS_KEY));
-    if (coordinateArr) {
-        configureMap(coordinateArr)
-    } else {
-        // FHV position as default
-        configureMap([47.406653, 9.744844]);
-    }
+    let coordinateArr = JSON.parse(localStorage.getItem(LS_LAST_COORDS_KEY));
+    coordinateArr = coordinateArr ?? [47.406653, 9.744844];
+
+    configureMap(coordinateArr);
 
     // setup service worker
     if ('serviceWorker' in navigator) {
@@ -178,20 +169,24 @@ window.onload = () => {
         });
     }
 
-    /* register callbacks to Geolocation service */
     if ('geolocation' in navigator) {
+        let logError = (err) => {
+            console.error(err.message);
+        }
+
         geo = navigator.geolocation;
         geo.getCurrentPosition((p) => updatePosition(p, 17), logError);
         watcherId = geo.watchPosition((p) => updatePosition(p), logError, {
             enableHighAccuracy: true,
             maximumAge: 10000
         });
+    } else {
+        updatePosition({coords: {latitude: 47.406653, longitude: 9.744844, altitude: 440, accuracy: 40, heading: 45, speed: 1.8}});
     }
 }
 
 window.onbeforeunload = () => {
     if (geo) {
-        console.log(`will clear the watcher ${watcherId}`);
         geo.clearWatch(watcherId);
     }
 }
