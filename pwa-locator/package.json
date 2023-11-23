@@ -1,4 +1,5 @@
 {
+	"author": "Marco Prescher",
     "name": "locator",
     "source": [
         "src/index.html",
